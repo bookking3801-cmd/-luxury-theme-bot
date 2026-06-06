@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GRID SENDER PRO v6.0 - Multi-Window Broadcaster</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 50%, #0f1438 100%);
+            color: #e8e8f0;
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        /* Navbar */
+        nav {
+            background: rgba(15, 20, 56, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 1rem 2rem;
+            border-bottom: 2px solid #2d2a5c;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        nav .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        nav .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #00d9ff;
+            text-shadow: 0 0 10px rgba(0, 217, 255, 0.5);
+        }
+
+        nav a {
+            color: #e8e8f0;
+            text-decoration: none;
+            margin-left: 2rem;
+            transition: color 0.3s;
+        }
+
+        nav a:hover {
+            color: #00d9ff;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* Hero Section */
+        .hero {
+            text-align: center;
+            padding: 4rem 2rem;
+            background: linear-gradient(135deg, rgba(0, 217, 255, 0.1), rgba(255, 0, 110, 0.1));
+            border-radius: 15px;
+            border: 1px solid #2d2a5c;
+            margin-bottom: 3rem;
+            box-shadow: 0 0 30px rgba(0, 217, 255, 0.2);
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #00d9ff, #00ff9f);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 0 20px rgba(0, 217, 255, 0.3);
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            color: #a8a8c0;
+            margin-bottom: 2rem;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 0.8rem 2rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #00d9ff, #06b6d4);
+            color: #0a0e27;
+            box-shadow: 0 0 20px rgba(0, 217, 255, 0.4);
+        }
+
+        .btn-primary:hover {
+            box-shadow: 0 0 30px rgba(0, 217, 255, 0.6);
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #ff006e, #ff1744);
+            color: #fff;
+            box-shadow: 0 0 20px rgba(255, 0, 110, 0.4);
+        }
+
+        .btn-secondary:hover {
+            box-shadow: 0 0 30px rgba(255, 0, 110, 0.6);
+            transform: translateY(-2px);
+        }
+
+        /* Features Grid */
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .feature-card {
+            background: rgba(15, 20, 56, 0.8);
+            border: 1px solid #2d2a5c;
+            border-radius: 12px;
+            padding: 2rem;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s;
+        }
+
+        .feature-card:hover {
+            border-color: #00d9ff;
+            box-shadow: 0 0 20px rgba(0, 217, 255, 0.2);
+            transform: translateY(-5px);
+        }
+
+        .feature-card h3 {
+            color: #00d9ff;
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+        }
+
+        .feature-card p {
+            color: #a8a8c0;
+            font-size: 0.95rem;
+        }
+
+        /* Specifications */
+        .specs {
+            background: rgba(15, 20, 56, 0.8);
+            border: 1px solid #2d2a5c;
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .specs h2 {
+            color: #00ff9f;
+            margin-bottom: 1.5rem;
+            text-shadow: 0 0 10px rgba(0, 255, 159, 0.3);
+        }
+
+        .specs-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .spec-item {
+            padding: 1rem;
+            background: rgba(26, 31, 58, 0.6);
+            border-left: 3px solid #00d9ff;
+            border-radius: 8px;
+        }
+
+        .spec-item strong {
+            color: #ffd700;
+        }
+
+        /* API Info */
+        .api-section {
+            background: rgba(15, 20, 56, 0.8);
+            border: 1px solid #2d2a5c;
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .api-section h2 {
+            color: #ff006e;
+            margin-bottom: 1.5rem;
+            text-shadow: 0 0 10px rgba(255, 0, 110, 0.3);
+        }
+
+        .api-item {
+            background: rgba(26, 31, 58, 0.6);
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            border-radius: 8px;
+            border-left: 4px solid #ffd700;
+        }
+
+        .api-item h3 {
+            color: #ffd700;
+            margin-bottom: 0.5rem;
+        }
+
+        .api-item code {
+            display: block;
+            background: rgba(10, 14, 39, 0.8);
+            padding: 1rem;
+            margin-top: 0.5rem;
+            border-radius: 6px;
+            overflow-x: auto;
+            color: #00ff9f;
+            font-family: 'Consolas', monospace;
+            font-size: 0.9rem;
+        }
+
+        /* Hotkeys */
+        .hotkeys {
+            background: rgba(15, 20, 56, 0.8);
+            border: 1px solid #2d2a5c;
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .hotkeys h2 {
+            color: #9d4edd;
+            margin-bottom: 1.5rem;
+            text-shadow: 0 0 10px rgba(157, 78, 221, 0.3);
+        }
+
+        .hotkey-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .hotkey {
+            background: rgba(26, 31, 58, 0.6);
+            padding: 1rem;
+            border-radius: 8px;
+            border: 1px solid #2d2a5c;
+        }
+
+        .hotkey kbd {
+            background: #ffd700;
+            color: #0a0e27;
+            padding: 0.3rem 0.6rem;
+            border-radius: 4px;
+            font-weight: bold;
+            font-family: monospace;
+        }
+
+        .hotkey-desc {
+            color: #a8a8c0;
+            margin-top: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        /* Footer */
+        footer {
+            background: rgba(15, 20, 56, 0.95);
+            border-top: 2px solid #2d2a5c;
+            padding: 2rem;
+            text-align: center;
+            margin-top: 3rem;
+            color: #a8a8c0;
+        }
+
+        footer a {
+            color: #00d9ff;
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .btn-group {
+                flex-direction: column;
+            }
+
+            nav .container {
+                flex-direction: column;
+                gap: 1rem;
+            }
+        }
+
+        /* Animations */
+        @keyframes glow {
+            0%, 100% { text-shadow: 0 0 10px rgba(0, 217, 255, 0.3); }
+            50% { text-shadow: 0 0 20px rgba(0, 217, 255, 0.6); }
+        }
+
+        .glow {
+            animation: glow 2s infinite;
+        }
+
+        .badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #00d9ff, #06b6d4);
+            color: #0a0e27;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: bold;
+            margin-right: 0.5rem;
+        }
+
+        .code-block {
+            background: rgba(10, 14, 39, 0.8);
+            border: 1px solid #2d2a5c;
+            border-radius: 8px;
+            padding: 1.5rem;
+            overflow-x: auto;
+            margin: 1rem 0;
+        }
+
+        .code-block code {
+            color: #00ff9f;
+            font-family: 'Consolas', monospace;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <div class="container">
+            <div class="logo">⚡ GRID SENDER PRO</div>
+            <div>
+                <a href="#features">Features</a>
+                <a href="#specs">Specs</a>
+                <a href="#api">Network API</a>
+                <a href="#hotkeys">Hotkeys</a>
+                <a href="https://github.com/bookking3801-cmd/-luxury-theme-bot" target="_blank">GitHub</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <div class="container">
+        <div class="hero">
+            <h1>⚡ GRID SENDER PRO v6.0</h1>
+            <p>Multi-Window Message Broadcaster with Advanced Network Detection</p>
+            <div class="btn-group">
+                <a href="https://github.com/bookking3801-cmd/-luxury-theme-bot/blob/main/MultiSender.ahk" class="btn btn-primary">📥 Download Script</a>
+                <a href="https://github.com/bookking3801-cmd/-luxury-theme-bot" class="btn btn-secondary">🔗 View Repository</a>
+            </div>
+            <p style="margin-top: 2rem; font-size: 0.9rem;">
+                <span class="badge">Premium</span>
+                <span class="badge">AutoHotkey v2.0</span>
+                <span class="badge">Dual API</span>
+            </p>
+        </div>
+
+        <!-- Features Section -->
+        <section id="features" class="features">
+            <div class="feature-card">
+                <h3>🎯 Multi-Window Control</h3>
+                <p>Register and manage multiple windows simultaneously. Broadcast messages across grid layout automatically.</p>
+            </div>
+
+            <div class="feature-card">
+                <h3>📡 Smart IP Detection</h3>
+                <p>Dual API system (ip-api.com + ipify.org) with fallback support. Get detailed geo-location data with ISP info.</p>
+            </div>
+
+            <div class="feature-card">
+                <h3>⚡ Real-time Network Stats</h3>
+                <p>Monitor download/upload speeds with live updates. Display network performance and connection status.</p>
+            </div>
+
+            <div class="feature-card">
+                <h3>🎨 Premium UI Design</h3>
+                <p>Cyberpunk aesthetic with neon colors, smooth animations, and responsive layout.</p>
+            </div>
+
+            <div class="feature-card">
+                <h3>🧩 Auto-Scale Grid Layout</h3>
+                <p>Automatically arrange windows in optimal grid pattern based on screen resolution and window count.</p>
+            </div>
+
+            <div class="feature-card">
+                <h3>⌨️ Hotkey Support</h3>
+                <p>Quick access functions: F1 (Send), F2 (Stop), F6 (Add Window), F4 (Exit)</p>
+            </div>
+        </section>
+
+        <!-- Specifications -->
+        <section id="specs" class="specs">
+            <h2>📊 Specifications</h2>
+            <div class="specs-grid">
+                <div class="spec-item">
+                    <strong>Language:</strong><br>AutoHotkey v2.0
+                </div>
+                <div class="spec-item">
+                    <strong>UI Size:</strong><br>360 × 650 pixels
+                </div>
+                <div class="spec-item">
+                    <strong>Transparency:</strong><br>240/255 (Adjustable)
+                </div>
+                <div class="spec-item">
+                    <strong>Cache Duration:</strong><br>30 seconds
+                </div>
+                <div class="spec-item">
+                    <strong>API Timeout:</strong><br>5 seconds per request
+                </div>
+                <div class="spec-item">
+                    <strong>Keypress Delay:</strong><br>10-10 ms (typing speed)
+                </div>
+                <div class="spec-item">
+                    <strong>Network Update:</strong><br>Every 2 seconds
+                </div>
+                <div class="spec-item">
+                    <strong>Window Margin:</strong><br>2 pixels between windows
+                </div>
+            </div>
+        </section>
+
+        <!-- Network & API Section -->
+        <section id="api" class="api-section">
+            <h2>🌐 Network Detection & API</h2>
+
+            <div class="api-item">
+                <h3>Primary API: ip-api.com</h3>
+                <p>Comprehensive geolocation and ISP detection</p>
+                <code>GET http://ip-api.com/json/?fields=status,query,country,regionName,city,isp,lat,lon</code>
+                <p style="margin-top: 0.5rem; color: #00ff9f;">
+                    ✅ IP Address<br>
+                    ✅ ISP (Internet Service Provider)<br>
+                    ✅ Country & Region<br>
+                    ✅ City Name<br>
+                    ✅ GPS Coordinates (Latitude/Longitude)
+                </p>
+            </div>
+
+            <div class="api-item">
+                <h3>Fallback API: api.ipify.org</h3>
+                <p>Simple IP address detection (backup option)</p>
+                <code>GET https://api.ipify.org?format=json</code>
+                <p style="margin-top: 0.5rem; color: #ffd700;">
+                    ✅ IP Address only<br>
+                    ℹ️ Limited information mode
+                </p>
+            </div>
+
+            <div class="code-block">
+                <h4 style="color: #00ff9f; margin-bottom: 1rem;">Cache & Update Mechanism</h4>
+                <code>
+- Cache Duration: 30 seconds<br>
+- Auto-refresh on program start<br>
+- Manual refresh via ↻ button<br>
+- Timeout protection: 5 seconds per API call<br>
+- Dual fallback system for reliability
+                </code>
+            </div>
+        </section>
+
+        <!-- Hotkeys Section -->
+        <section id="hotkeys" class="hotkeys">
+            <h2>⌨️ Keyboard Shortcuts</h2>
+            <div class="hotkey-list">
+                <div class="hotkey">
+                    <kbd>F1</kbd>
+                    <div class="hotkey-desc">🚀 Send Message to Next Window</div>
+                </div>
+                <div class="hotkey">
+                    <kbd>F2</kbd>
+                    <div class="hotkey-desc">🛑 Emergency Stop</div>
+                </div>
+                <div class="hotkey">
+                    <kbd>F4</kbd>
+                    <div class="hotkey-desc">✕ Exit Program</div>
+                </div>
+                <div class="hotkey">
+                    <kbd>F6</kbd>
+                    <div class="hotkey-desc">➕ Register Current Window</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Usage Instructions -->
+        <section class="specs" style="margin-bottom: 3rem;">
+            <h2>📖 How to Use</h2>
+            <ol style="padding-left: 2rem; color: #a8a8c0;">
+                <li>Press <kbd style="background: #ffd700; color: #0a0e27; padding: 0.2rem 0.4rem; border-radius: 3px; font-weight: bold;">F6</kbd> and hover over each browser window you want to add</li>
+                <li>Click button "➕ เพิ่มจอ" or press F6 to register the window</li>
+                <li>Type your messages in the text editor (one message per line)</li>
+                <li>Click "🚀 ยิงข้อความ" or press <kbd style="background: #ffd700; color: #0a0e27; padding: 0.2rem 0.4rem; border-radius: 3px; font-weight: bold;">F1</kbd> to broadcast</li>
+                <li>Click "🎯 จัดหน้าจอ" to auto-arrange windows in grid layout</li>
+                <li>Use "↻" button to refresh network information</li>
+            </ol>
+        </section>
+
+        <!-- Color Palette -->
+        <section class="specs">
+            <h2>🎨 Color Palette (Neon Premium)</h2>
+            <div class="specs-grid">
+                <div class="spec-item">
+                    <strong style="color: #00d9ff;">Cyan:</strong> #00D9FF<br>
+                    Primary UI accent
+                </div>
+                <div class="spec-item">
+                    <strong style="color: #00ff9f;">Neon Green:</strong> #00FF9F<br>
+                    Success & active states
+                </div>
+                <div class="spec-item">
+                    <strong style="color: #ff006e;">Magenta:</strong> #FF006E<br>
+                    Action buttons
+                </div>
+                <div class="spec-item">
+                    <strong style="color: #ffd700;">Gold:</strong> #FFD700<br>
+                    Warnings & highlights
+                </div>
+                <div class="spec-item">
+                    <strong style="color: #ff1744;">Red:</strong> #FF1744<br>
+                    Errors & danger actions
+                </div>
+                <div class="spec-item">
+                    <strong style="color: #9d4edd;">Purple:</strong> #9D4EDD<br>
+                    Secondary actions
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <p>GRID SENDER PRO v6.0 | Developed by <strong>Book King</strong></p>
+        <p>🔗 <a href="https://github.com/bookking3801-cmd/-luxury-theme-bot" target="_blank">GitHub Repository</a> | 📧 bookking3801@gmail.com</p>
+        <p style="margin-top: 1rem; font-size: 0.9rem;">© 2026 GRID SENDER PRO | Premium Auto-Broadcast Software</p>
+    </footer>
+</body>
+</html>
