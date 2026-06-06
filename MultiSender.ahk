@@ -41,7 +41,7 @@ SaveConfig() {
 LoadMessages() {
     global MSG_FILE
     if !FileExist(MSG_FILE) {
-        defaultMsgs := "สวัสดีครับ สนใจสอบถามได้เลยนะ`nขอบคุณที่แวะมารับชมครับผม`nฝากกดหัวใจและติดตามด้วยนะครับ"
+        defaultMsgs := "สวัสดีครับ สนใจสอบถามได้เลยนะ`nขอบคุณที่แวะมารับชมครับผม`nฝากก[...]
         FileAppend(defaultMsgs, MSG_FILE, "UTF-8")
     }
     return FileRead(MSG_FILE, "UTF-8")
@@ -223,28 +223,35 @@ FetchGeoIPEnhanced() {
     }
     
     try {
-        ; Primary API: ip-api.com
+        ; Primary API: ipinfo.io (Most accurate & reliable)
         whr := ComObject("WinHttp.WinHttpRequest.5.1")
         whr.SetTimeouts(5000, 5000, 5000, 5000)
-        whr.Open("GET", "http://ip-api.com/json/?fields=status,query,country,regionName,city,isp,lat,lon", false)
+        whr.Open("GET", "https://ipinfo.io/json", false)
         whr.Send()
         
         if (whr.Status == 200) {
             res := whr.ResponseText
-            if InStr(res, '"status":"success"') {
-                RegExMatch(res, '"query":"([^"]+)"', &matchIp)
+            if InStr(res, '"ip"') {
+                RegExMatch(res, '"ip":"([^"]+)"', &matchIp)
                 RegExMatch(res, '"country":"([^"]+)"', &matchCountry)
-                RegExMatch(res, '"regionName":"([^"]+)"', &matchRegion)
+                RegExMatch(res, '"region":"([^"]+)"', &matchRegion)
                 RegExMatch(res, '"city":"([^"]+)"', &matchCity)
-                RegExMatch(res, '"isp":"([^"]+)"', &matchISP)
-                RegExMatch(res, '"lat":([^,}]+)', &matchLat)
-                RegExMatch(res, '"lon":([^,}]+)', &matchLon)
+                RegExMatch(res, '"org":"([^"]+)"', &matchOrg)
                 
                 ip := matchIp ? matchIp[1] : "Unknown"
                 country := matchCountry ? matchCountry[1] : "—"
                 region := matchRegion ? matchRegion[1] : "—"
                 city := matchCity ? matchCity[1] : "—"
-                isp := matchISP ? matchISP[1] : "—"
+                org := matchOrg ? matchOrg[1] : "—"
+                
+                ; Extract ISP from org string (format: "AS#### ISP Name")
+                isp := ""
+                if (org != "—") {
+                    RegExMatch(org, '^AS\d+\s+(.+)$', &ispMatch)
+                    isp := ispMatch ? ispMatch[1] : org
+                } else {
+                    isp := "—"
+                }
                 
                 geoIPCache["ip"] := ip
                 geoIPCache["country"] := country
@@ -260,17 +267,52 @@ FetchGeoIPEnhanced() {
             }
         }
         
-        ; Fallback: ipify (ง่ายกว่า)
+        ; Fallback 1: ip-api.com
         whr2 := ComObject("WinHttp.WinHttpRequest.5.1")
         whr2.SetTimeouts(5000, 5000, 5000, 5000)
-        whr2.Open("GET", "https://api.ipify.org?format=json", false)
+        whr2.Open("GET", "http://ip-api.com/json/?fields=status,query,country,regionName,city,isp", false)
         whr2.Send()
         
         if (whr2.Status == 200) {
             res2 := whr2.ResponseText
-            RegExMatch(res2, '"ip":"([^"]+)"', &matchIp2)
-            if (matchIp2) {
-                ip := matchIp2[1]
+            if InStr(res2, '"status":"success"') {
+                RegExMatch(res2, '"query":"([^"]+)"', &matchIp2)
+                RegExMatch(res2, '"country":"([^"]+)"', &matchCountry2)
+                RegExMatch(res2, '"regionName":"([^"]+)"', &matchRegion2)
+                RegExMatch(res2, '"city":"([^"]+)"', &matchCity2)
+                RegExMatch(res2, '"isp":"([^"]+)"', &matchISP2)
+                
+                ip := matchIp2 ? matchIp2[1] : "Unknown"
+                country := matchCountry2 ? matchCountry2[1] : "—"
+                region := matchRegion2 ? matchRegion2[1] : "—"
+                city := matchCity2 ? matchCity2[1] : "—"
+                isp := matchISP2 ? matchISP2[1] : "—"
+                
+                geoIPCache["ip"] := ip
+                geoIPCache["country"] := country
+                geoIPCache["region"] := region
+                geoIPCache["city"] := city
+                geoIPCache["isp"] := isp
+                geoIPCacheTime := currentTime
+                isNetworkInitialized := true
+                
+                ipDisplay.Value := "📡 IP: " ip " | ISP: " isp
+                geoDisplay.Value := "📍 " city ", " region " | " country
+                return
+            }
+        }
+        
+        ; Fallback 2: ipify (simple IP only)
+        whr3 := ComObject("WinHttp.WinHttpRequest.5.1")
+        whr3.SetTimeouts(5000, 5000, 5000, 5000)
+        whr3.Open("GET", "https://api.ipify.org?format=json", false)
+        whr3.Send()
+        
+        if (whr3.Status == 200) {
+            res3 := whr3.ResponseText
+            RegExMatch(res3, '"ip":"([^"]+)"', &matchIp3)
+            if (matchIp3) {
+                ip := matchIp3[1]
                 geoIPCache["ip"] := ip
                 geoIPCacheTime := currentTime
                 isNetworkInitialized := true
